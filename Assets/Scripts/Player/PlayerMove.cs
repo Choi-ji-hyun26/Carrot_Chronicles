@@ -12,16 +12,8 @@ using UnityEngine.UIElements;
 
 public class PlayerMove : MonoBehaviour
 {
-    public GameManager gameManager;
     public Transform groundCheck; // 발바닥 기준 위치
     public float maxSpeed = 6;
-
-    // code about jump
-    public float firstJumpForce = 20f;
-    public float doubleJumpForce = 16f;
-    int jumpCount = 0; // 이단점프 위한 count 변수
-    int maxJumpCount = 2;
-    public bool isJumping = false;
 
     //new code about ladder
     public bool onLadder;
@@ -47,15 +39,12 @@ public class PlayerMove : MonoBehaviour
     BoxCollider2D boxCollider;
     Animator animator;
 
-    AudioSource audioSource;
-
     void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         boxCollider = GetComponent<BoxCollider2D>();
         animator = GetComponent<Animator>();
-        audioSource = GetComponent<AudioSource>();
     }
 
     void Update() // 단발적인 Key 입력
@@ -86,17 +75,7 @@ public class PlayerMove : MonoBehaviour
             animator.SetBool("isClimbing", false);
         }
 
-        // Jump
-        if (Input.GetButtonDown("Jump"))
-        {
-            if (jumpCount < maxJumpCount)
-            {
-                isJumping = true;
-                animator.SetBool("isJumping", true);
-                animator.SetBool("isClimbing", false);
-            }
-            SoundManager.Instance.PlaySound("JUMP");
-        }
+        // // Jump
 
         if (onLadder && Mathf.Abs(Input.GetAxisRaw("Vertical")) > 0.1f) //사다리와 겹치고 위아래 키 조작이 있어야만 
         {
@@ -115,14 +94,14 @@ public class PlayerMove : MonoBehaviour
 
     void FixedUpdate() // 지속적인 key 입력
     {
-        // 바닥 체크
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+        // // 바닥 체크
+         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
 
         // 땅에 닿았으면 점프 카운트 초기화
-        if (isGrounded)
-        {
-            jumpCount = 0;
-        }
+        // if (isGrounded)
+        // {
+        //     jumpCount = 0;
+        // }
 
         //Move Speed
         float h = Input.GetAxisRaw("Horizontal");
@@ -135,17 +114,6 @@ public class PlayerMove : MonoBehaviour
             rigid.velocity = new Vector2(maxSpeed * (-1), rigid.velocity.y);
 
         //Landing Platform
-        if (rigid.velocity.y < 0)
-        { //착지할때도 ray를 그리지 않게하기 위함
-            Debug.DrawRay(groundCheck.position, Vector3.down * 0.3f, new Color(1, 0, 0));
-            RaycastHit2D rayHit = Physics2D.Raycast(groundCheck.position, Vector3.down, 0.3f, LayerMask.GetMask("Platform"));// 물리기반, 이 레이어에 해당하는 것만 스캔할 것
-            // rayHit : 빔을 쏘고 오브젝트에 대한 정보
-            if (rayHit.collider != null)
-            {// 빔을 맞았을 때
-                if (rayHit.distance < 0.2f) //잘 밀착했는지
-                    animator.SetBool("isJumping", false);
-            }
-        }
 
         if (isClimbing)
         {
@@ -169,21 +137,7 @@ public class PlayerMove : MonoBehaviour
             Debug.Log("Gravity : " + rigid.gravityScale);
         }
 
-        if (isJumping)
-        {
-            float appliedForce = (jumpCount == 0) ? firstJumpForce : doubleJumpForce; // 점프 횟수에 따라 높이 다르게 적용
-
-            //수직 속도 초기화해서 점프 높이 일정하게
-            if (jumpCount > 0)
-                rigid.velocity = new Vector2(rigid.velocity.x, 0);
-
-            rigid.velocity = new Vector2(rigid.velocity.x, appliedForce);
-            jumpCount++;
-            isJumping = false;
-
-            Debug.Log($"Jump Count: {jumpCount}, Applied Force: {appliedForce}");
-
-        }
+        //JUMP
     }
 
     void OnCollisionEnter2D(Collision2D collision)
@@ -207,28 +161,15 @@ public class PlayerMove : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        // Item : Carrot, Star
-        if (collision.gameObject.tag == "Item")
+        // 당근, 별  아이템
+        if (collision.TryGetComponent<ICollectible>(out var item))
         {
-            //health
-            bool isCarrot = collision.gameObject.name.Contains("Carrot");
-            if (isCarrot)
-                //gameManager.HealthUp();
-                Stats.instance.HealthUp();
-            // point
-            bool isStar = collision.gameObject.name.Contains("Star");
-            if (isStar)
-                //gameManager.stagePoint += 1;
-                Stats.instance.stagePoint += 1;
-                //Deactive Item
-                collision.gameObject.SetActive(false);
-
-            // Sound
-            SoundManager.Instance.PlaySound("ITEM");
-
+            item.OnCollected(gameObject);
+            return;
         }
+
         // 보물상자
-        else if (collision.gameObject.tag == "Chest")
+        if (collision.gameObject.tag == "Chest")
         {
             if (isClover) // public bool 변수를 만들어서,, ChestItem에서 이 변수만 접근하게?
             {
@@ -236,7 +177,6 @@ public class PlayerMove : MonoBehaviour
 
                 isUnBeatTime = true;
                 StartCoroutine(UnBeatTime());
-                //gameManager.ActivateFeverMode(); // 피버 UI
                 gameObject.GetComponentInParent<PlayerFever>().ActivateFeverMode();
 
                 SoundManager.Instance.PlaySound("ITEM");
@@ -246,7 +186,7 @@ public class PlayerMove : MonoBehaviour
         else if (collision.gameObject.tag == "Finish")
         {
             //Next Stage
-            gameManager.NextStage();
+            GameManager.Instance.NextStage();
 
             //Sound
             SoundManager.Instance.PlaySound("FINISH");
@@ -293,14 +233,12 @@ public class PlayerMove : MonoBehaviour
         enemyMove.OnDamaged();
 
         //Sound
-        //PlaySound("ATTACK");
         SoundManager.Instance.PlaySound("ATTACK");
     }
 
     void OnDamaged(Vector2 targetPos)
     {
         // Health Down
-        //gameManager.HealthDown();
         Stats.instance.HealthDown();
 
         //Change Layer (Immortal Active)
@@ -338,7 +276,6 @@ public class PlayerMove : MonoBehaviour
         rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
 
         //Sound
-        //PlaySound("DIE");
         SoundManager.Instance.PlaySound("DIE");
     }
 
