@@ -11,17 +11,14 @@ public enum ItemType
 
 public class ChestItems : MonoBehaviour
 {
-    public PlayerMove4 playerMove4;
+    public PlayerMove playerMove;
     public GameManager gameManager;
     public GameObject miniMapCamera;
     public ItemType type;
     public int arrangeId = 0;
 
     Rigidbody2D itemBody;
-    void Awake()
-    {
-        //itemBody = GetComponent<Rigidbody2D>();
-    }
+
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -29,12 +26,11 @@ public class ChestItems : MonoBehaviour
         {
             if (type == ItemType.clover)
             {
-                playerMove4.isClover = true;
+                playerMove.isClover = true;
                 //Debug.Log("Clover");
             }
             else if (type == ItemType.scroll)
             {
-                //playerMove4.isScroll = true;
                 miniMapCamera.SetActive(true);
                 //Debug.Log("Scroll");
             }
@@ -53,7 +49,7 @@ public class ChestItems : MonoBehaviour
             }
             else
             {
-                    Debug.LogWarning("Rigidbody2D가 없음!");
+                Debug.LogWarning("Rigidbody2D가 없음!");
             }
             //0.5초 뒤에 제거
             Destroy(gameObject, 1f);

@@ -8,7 +8,7 @@ public class EndingController : MonoBehaviour
     public Text scoreText;
     void Start()
     {
-        int score = GameManager.Instance.totalPoint + GameManager.Instance.stagePoint;
+        int score = Stats.instance.stagePoint;
         scoreText.text = "SCORE " + score.ToString();
     }
 

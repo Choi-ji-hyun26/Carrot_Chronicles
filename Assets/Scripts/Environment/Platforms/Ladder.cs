@@ -4,17 +4,15 @@ using UnityEngine;
 
 public class Ladder : MonoBehaviour
 {
-    private PlayerMove4 player;
+    private PlayerMove player;
 
     void Start()
     {
-        player = GameObject.Find("Player").GetComponent<PlayerMove4>();
+        player = GameObject.Find("Player").GetComponent<PlayerMove>();
     }
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        //PlayerMove2 player = collision.GetComponent<PlayerMove2>();
-
         if(player != null)
         {
             player.onLadder = true;
@@ -23,8 +21,6 @@ public class Ladder : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        //PlayerMove2 player = collision.GetComponent<PlayerMove2>();
-
         if(player != null)
         {
             player.onLadder = false;

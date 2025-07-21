@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class OpenChest : MonoBehaviour
 {
-    private PlayerMove4 player;
+    private PlayerMove player;
     SpriteRenderer spriteRenderer;
     public Sprite opendChest;
     public GameObject itemPrefab;   //담겨있는 아이템의 프리펩
@@ -12,7 +12,7 @@ public class OpenChest : MonoBehaviour
 
     void Start()
     {
-        player = GameObject.Find("Player").GetComponent<PlayerMove4>();
+        player = GameObject.Find("Player").GetComponent<PlayerMove>();
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 

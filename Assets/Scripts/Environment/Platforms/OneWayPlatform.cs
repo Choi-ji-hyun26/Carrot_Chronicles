@@ -6,11 +6,11 @@ using UnityEngine.Tilemaps;
 public class OneWayPlatform : MonoBehaviour
 {
     private PlatformEffector2D effector;
-    private PlayerMove4 player; // 또는 너의 플레이어 스크립트
+    private PlayerMove player; // 또는 너의 플레이어 스크립트
     void Start()
     {
         effector = GetComponent<PlatformEffector2D>();
-        player = GameObject.FindWithTag("Player").GetComponent<PlayerMove4>();
+        player = GameObject.FindWithTag("Player").GetComponent<PlayerMove>();
     }
 
     // Update is called once per frame
