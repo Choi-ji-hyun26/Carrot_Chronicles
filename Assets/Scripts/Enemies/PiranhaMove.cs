@@ -6,10 +6,11 @@ public class PiranhaMove : EnemyBase
 {
     public PiranhaAttack piranhaAttack;
 
-    public override void OnDamaged()
+    protected override void Awake()
     {
-        // isDead = true;
-        base.OnDamaged();
+        base.Awake();
+        if (piranhaAttack == null)
+            piranhaAttack = GetComponent<PiranhaAttack>(); // fallback 안전장치
     }
     public void enbox()
     {
