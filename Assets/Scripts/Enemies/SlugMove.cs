@@ -3,13 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SlugMove : EnemyMove
+public class SlugMove : EnemyBase
 {
-    // Start is called before the first frame update
+    public int nextMove;
     protected override void Awake()
     {
         base.Awake();
-        Invoke("Think", 5); // 5초뒤에 함수 호출
+        Invoke("Think", 3); // 5초뒤에 함수 호출
     }
 
     void FixedUpdate()

@@ -3,12 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FlyingEnemyMove : EnemyMove
+public class FlyingEnemyMove : EnemyBase
 {
     public float speed = 1f; 
     public float moveDistance = 2f; //이동 범위
     private Vector3 startPos;
-    bool isDead = false;
+    bool isDead = false; // 중력 == 0 이기에 죽을 때 공중에 있지 않도록
 
 
     protected override void Awake()

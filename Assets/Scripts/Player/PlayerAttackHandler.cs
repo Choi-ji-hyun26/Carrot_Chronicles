@@ -38,10 +38,10 @@ public class PlayerAttackHandler : MonoBehaviour
             rigid.AddForce(Vector2.up * 10, ForceMode2D.Impulse);
 
         //Enemy Die
-        EnemyMove enemyMove = enemy.GetComponent<EnemyMove>();
-        if (enemyMove == null)
+        EnemyBase enemyBase = enemy.GetComponent<EnemyBase>();
+        if (enemyBase == null)
             return;
-        enemyMove.OnDamaged();
+        enemyBase.OnDamaged();
 
         //Sound
         SoundManager.Instance.PlaySound("ATTACK");
