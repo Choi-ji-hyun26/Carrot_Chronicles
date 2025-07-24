@@ -64,7 +64,7 @@ public class Stats : MonoBehaviour
         else if (health == 0)
         {
             UIHealth.sprite = hpSprite0;
-            gameObject.GetComponentInParent<PlayerMove>().OnDie();
+            gameObject.GetComponentInParent<PlayerDeathHandler>().OnDie();
             //Invoke("ViewBtn",2); // 게임매니저가 2초 사이에 파괴된다면 문제 발생
             GameManager.Instance.ViewBtn();
         }

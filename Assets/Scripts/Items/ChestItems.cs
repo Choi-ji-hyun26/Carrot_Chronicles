@@ -11,8 +11,6 @@ public enum ItemType
 
 public class ChestItems : MonoBehaviour
 {
-    public PlayerMove playerMove;
-    public GameManager gameManager;
     public GameObject miniMapCamera;
     public ItemType type;
     public int arrangeId = 0;
@@ -24,9 +22,12 @@ public class ChestItems : MonoBehaviour
     {
         if (collision.gameObject.tag == "Player" )
         {
+            var chestHandler = collision.GetComponent<PlayerChestHandler>();
+            if (chestHandler == null) return;
+
             if (type == ItemType.clover)
             {
-                playerMove.isClover = true;
+                chestHandler.isClover = true;
                 //Debug.Log("Clover");
             }
             else if (type == ItemType.scroll)

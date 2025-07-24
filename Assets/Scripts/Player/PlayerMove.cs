@@ -15,7 +15,14 @@ public class PlayerMove : MonoBehaviour
     public Transform groundCheck; // 발바닥 기준 위치
     public float maxSpeed = 6;
 
-    //new code about ladder
+    // jump
+    public float firstJumpForce = 20f;
+    public float doubleJumpForce = 16f;
+    int jumpCount = 0; // 이단점프 위한 count 변수
+    int maxJumpCount = 2;
+    public bool isJumping = false;
+
+    // ladder
     public bool onLadder;
     public float climbSpeed = 6;
     private float climbDirection;
@@ -28,16 +35,10 @@ public class PlayerMove : MonoBehaviour
     public float groundCheckRadius = 0.2f; //for isGrouded
     public LayerMask groundLayer; //for isGrounded
 
-    // 무적 타임
-    public bool isUnBeatTime = false;
-
-    // 보물상자 아이템
-    public bool isClover;
-
-    Rigidbody2D rigid;
-    SpriteRenderer spriteRenderer;
-    BoxCollider2D boxCollider;
-    Animator animator;
+    public Rigidbody2D rigid { get; private set; }
+    public SpriteRenderer spriteRenderer { get; private set; }
+    public BoxCollider2D boxCollider { get; private set; }
+    public Animator animator { get; private set; }
 
     void Awake()
     {
@@ -75,7 +76,17 @@ public class PlayerMove : MonoBehaviour
             animator.SetBool("isClimbing", false);
         }
 
-        // // Jump
+        // Jump
+        if (Input.GetButtonDown("Jump"))
+        {
+            if (jumpCount < maxJumpCount)
+            {
+                isJumping = true;
+                animator.SetBool("isJumping", true);
+                animator.SetBool("isClimbing", false);
+            }
+            SoundManager.Instance.PlaySound("JUMP");
+        }
 
         if (onLadder && Mathf.Abs(Input.GetAxisRaw("Vertical")) > 0.1f) //사다리와 겹치고 위아래 키 조작이 있어야만 
         {
@@ -95,13 +106,13 @@ public class PlayerMove : MonoBehaviour
     void FixedUpdate() // 지속적인 key 입력
     {
         // // 바닥 체크
-         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
 
         // 땅에 닿았으면 점프 카운트 초기화
-        // if (isGrounded)
-        // {
-        //     jumpCount = 0;
-        // }
+        if (isGrounded)
+        {
+            jumpCount = 0;
+        }
 
         //Move Speed
         float h = Input.GetAxisRaw("Horizontal");
@@ -114,6 +125,17 @@ public class PlayerMove : MonoBehaviour
             rigid.velocity = new Vector2(maxSpeed * (-1), rigid.velocity.y);
 
         //Landing Platform
+        if (rigid.velocity.y < 0)
+        { //착지할때도 ray를 그리지 않게하기 위함
+            Debug.DrawRay(groundCheck.position, Vector3.down * 0.3f, new Color(1, 0, 0));
+            RaycastHit2D rayHit = Physics2D.Raycast(groundCheck.position, Vector3.down, 0.3f, LayerMask.GetMask("Platform"));// 물리기반, 이 레이어에 해당하는 것만 스캔할 것
+            // rayHit : 빔을 쏘고 오브젝트에 대한 정보
+            if (rayHit.collider != null)
+            {// 빔을 맞았을 때
+                if (rayHit.distance < 0.2f) //잘 밀착했는지
+                    animator.SetBool("isJumping", false);
+            }
+        }
 
         if (isClimbing)
         {
@@ -138,145 +160,21 @@ public class PlayerMove : MonoBehaviour
         }
 
         //JUMP
-    }
-
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.tag == "Enemy")
+        if (isJumping)
         {
-            if (isUnBeatTime == true)
-            {
-                OnAttack(collision.transform);
-            }
-            else if (rigid.velocity.y < -0.01f && transform.position.y > collision.transform.position.y)
-            { // 점프 공격 또는 무적상태일때
-                OnAttack(collision.transform);
-            }
-            else
-            {
-                OnDamaged(collision.transform.position);
-            }
+            float appliedForce = (jumpCount == 0) ? firstJumpForce : doubleJumpForce; // 점프 횟수에 따라 높이 다르게 적용
+
+            //수직 속도 초기화해서 점프 높이 일정하게
+            if (jumpCount > 0)
+                rigid.velocity = new Vector2(rigid.velocity.x, 0);
+
+            rigid.velocity = new Vector2(rigid.velocity.x, appliedForce);
+            jumpCount++;
+            isJumping = false;
+
+            Debug.Log($"Jump Count: {jumpCount}, Applied Force: {appliedForce}");
+
         }
-    }
-
-    void OnTriggerEnter2D(Collider2D collision)
-    {
-        // 당근, 별  아이템
-        if (collision.TryGetComponent<ICollectible>(out var item))
-        {
-            item.OnCollected(gameObject);
-            return;
-        }
-
-        // 보물상자
-        if (collision.gameObject.tag == "Chest")
-        {
-            if (isClover) // public bool 변수를 만들어서,, ChestItem에서 이 변수만 접근하게?
-            {
-                gameObject.layer = 12; // 무적 상태 layer
-
-                isUnBeatTime = true;
-                StartCoroutine(UnBeatTime());
-                gameObject.GetComponentInParent<PlayerFever>().ActivateFeverMode();
-
-                SoundManager.Instance.PlaySound("ITEM");
-            }
-        }
-        // 포탈 : 피니시 구간
-        else if (collision.gameObject.tag == "Finish")
-        {
-            //Next Stage
-            GameManager.Instance.NextStage();
-
-            //Sound
-            SoundManager.Instance.PlaySound("FINISH");
-        }
-
-    }
-
-    private IEnumerator UnBeatTime()
-    {
-        int countTime = 0;
-
-        while (countTime < 35) // 35 * 0.2 = 7초
-        {
-            if (countTime % 2 == 0)
-                spriteRenderer.color = new Color32(255, 255, 255, 90); //반투명
-            else
-                spriteRenderer.color = new Color32(255, 255, 255, 180); // 좀더 진하게
-
-            yield return new WaitForSeconds(0.2f); // 깜빡임, 35 * 0.2 = 7초
-
-            countTime++;
-        }
-
-        gameObject.layer = 10; // 원래 상태 layer
-        spriteRenderer.color = new Color32(255, 255, 255, 255);
-        isUnBeatTime = false;
-        isClover = false;
-
-        yield return null;
-    }
-    void OnAttack(Transform enemy)
-    {
-        if (enemy == null)
-            return;
-
-        //Reaction Force
-        if (!isUnBeatTime) // 무적이 아닌 기본 상태에서 공격은 점프! 무적은 아무 움직임 x
-            rigid.AddForce(Vector2.up * 10, ForceMode2D.Impulse);
-
-        //Enemy Die
-        EnemyMove enemyMove = enemy.GetComponent<EnemyMove>();
-        if (enemyMove == null)
-            return;
-        enemyMove.OnDamaged();
-
-        //Sound
-        SoundManager.Instance.PlaySound("ATTACK");
-    }
-
-    void OnDamaged(Vector2 targetPos)
-    {
-        // Health Down
-        Stats.instance.HealthDown();
-
-        //Change Layer (Immortal Active)
-        gameObject.layer = 11; // PlayerDamaged의 Layer 번호
-        spriteRenderer.color = new Color(1, 1, 1, 0.4f); //0.4 : 투명도
-
-        //Reaction Force
-        int dirc = transform.position.x - targetPos.x > 0 ? 1 : -1; //왼쪽에서 맞으면 왼쪽으로, 오른쪽에서 맞으면 오른쪽으로 튕기기
-        rigid.AddForce(new Vector2(dirc, 1) * 10, ForceMode2D.Impulse);
-
-        // Animation
-        animator.SetTrigger("doDamaged");
-
-        //Sound
-        SoundManager.Instance.PlaySound("DAMAGED");
-
-        Invoke("OffDamaged", 3); // 무적시간 3초
-    }
-
-    void OffDamaged()
-    {
-        gameObject.layer = 10; //Player의 Layer 번호
-        spriteRenderer.color = new Color(1, 1, 1, 1);
-    }
-
-    public void OnDie()
-    {
-        //Sprite Alpha
-        spriteRenderer.color = new Color(1, 1, 1, 0.4f);
-        //Sprite Flip Y
-        spriteRenderer.flipY = true;
-        //Collider Disable
-        boxCollider.enabled = false;
-        //Die Effect Jump
-        rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
-
-        //Sound
-        SoundManager.Instance.PlaySound("DIE");
     }
 
     public void VelocityZero()
