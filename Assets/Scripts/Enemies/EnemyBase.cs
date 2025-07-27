@@ -5,10 +5,10 @@ using UnityEngine.WSA;
 
 public class EnemyBase : MonoBehaviour
 {
-    public Rigidbody2D rigid;
-    public Animator animator;
-    public SpriteRenderer spriteRenderer;
-    BoxCollider2D boxCollider;
+    protected Rigidbody2D rigid;
+    protected Animator animator;
+    protected SpriteRenderer spriteRenderer;
+    protected BoxCollider2D boxCollider;
 
     protected virtual void Awake()
     {
@@ -18,7 +18,7 @@ public class EnemyBase : MonoBehaviour
         boxCollider = GetComponent<BoxCollider2D>();
     }
 
-    public virtual void OnDamaged()
+    public virtual void OnDamaged()  //PlayerAttackHandler 에서 호출
     {
         //Sprite Alpha
         spriteRenderer.color = new Color(1,1,1,0.4f);
@@ -33,7 +33,7 @@ public class EnemyBase : MonoBehaviour
         Invoke("DeActive",5);
     }
 
-    void DeActive()
+    private void DeActive()
     {
         gameObject.SetActive(false);
     }

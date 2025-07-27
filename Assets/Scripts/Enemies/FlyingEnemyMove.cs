@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class FlyingEnemyMove : EnemyBase
 {
-    public float speed = 1f; 
-    public float moveDistance = 2f; //이동 범위
+    private float speed = 1f;
+    private float moveDistance = 2f; //이동 범위
     private Vector3 startPos;
-    bool isDead = false; // 중력 == 0 이기에 죽을 때 공중에 있지 않도록
+    private bool isDead = false; // 중력 == 0 이기에 죽을 때 공중에 있지 않도록
 
 
     protected override void Awake()
@@ -17,7 +17,7 @@ public class FlyingEnemyMove : EnemyBase
         startPos = transform.position;
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         if (isDead) return; // 죽었을 때 fixedupdate() 계속 실행되지 않도록
 
@@ -26,7 +26,7 @@ public class FlyingEnemyMove : EnemyBase
         rigid.MovePosition(newPos);
     }
 
-    public override void OnDamaged()
+    public override void OnDamaged() //PlayerAttackHandler 에서 호출
     {
         isDead = true;
         rigid.gravityScale = 4f;

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PiranhaMove : EnemyBase
 {
-    public PiranhaAttack piranhaAttack;
+    [SerializeField] private PiranhaAttack piranhaAttack; // 인스펙터 드래그 허용 -> SerializeField , 외부접근 막기 -> private
 
     protected override void Awake()
     {
@@ -12,11 +12,11 @@ public class PiranhaMove : EnemyBase
         if (piranhaAttack == null)
             piranhaAttack = GetComponent<PiranhaAttack>(); // fallback 안전장치
     }
-    public void enbox()
+    public void enbox() // 유니티 엔진 애니메이션에서 호출
     {
         piranhaAttack.enboxCollider();    
     }
-    public void debox()
+    public void debox() // 유니티 엔진 애니메이션에서 호출
     {
         piranhaAttack.deboxCollider();
     }

@@ -5,14 +5,14 @@ using UnityEngine;
 
 public class SlugMove : EnemyBase
 {
-    public int nextMove;
+    private int nextMove;
     protected override void Awake()
     {
         base.Awake();
         Invoke("Think", 3); // 5초뒤에 함수 호출
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         //Move
         rigid.velocity = new Vector2(nextMove,rigid.velocity.y);
@@ -27,7 +27,7 @@ public class SlugMove : EnemyBase
         }
     }
 
-        protected virtual void Think()
+    protected virtual void Think()
     {
         //Set Next Active
         nextMove = Random.Range(-1,2); //최소값(포함), 최대값(미포함) -1: 왼쪽 0: idle, 1: 오른쪽
@@ -44,7 +44,7 @@ public class SlugMove : EnemyBase
         Invoke("Think", nextThinkTime); //재귀 + 딜레이 
     }
 
-    void Turn()
+    private void Turn()
     {
         nextMove *= -1;
         spriteRenderer.flipX = nextMove == 1;

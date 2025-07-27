@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class PiranhaAttack : MonoBehaviour
 {
-    BoxCollider2D boxCollider;
+    private BoxCollider2D boxCollider;
 
-    void Awake()
+    private void Awake()
     {
         boxCollider = GetComponent<BoxCollider2D>();
     }
-    public void enboxCollider()
+    public void enboxCollider() // PiranhaMove 에서 호출
     {
         boxCollider.enabled = true;
     }
-    public void deboxCollider()
+    public void deboxCollider() // PiranhaMove 에서 호출
     {
         boxCollider.enabled = false;
     }

@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TrueEnding.unity
     guid: 308029f8a4c6a4b908775e810227c14f
+  - enabled: 1
+    path: Assets/Scenes/NormalEnding.unity
+    guid: c4fa5d0445f074af68004b9634bd0089
   m_configObjects: {}
