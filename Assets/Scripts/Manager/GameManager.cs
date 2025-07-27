@@ -50,15 +50,23 @@ public class GameManager : MonoBehaviour
             UIStage.text = "STAGE " + (stageIndex + 1); //stageIndex는 0부터 시작해서 +1
         }
         else // Game Clear
-        { 
+        {
             //Player Control Lock
             Time.timeScale = 0;
 
             ViewBtn();
 
-            //Ending Scene
-            SceneManager.LoadScene("Ending");
+            //Ending Scene 로드
+            LoadScenes();
         }
+    }
+
+    void LoadScenes()
+    {
+        if (Stats.instance.stagePoint > 15) // 진 엔딩
+            SceneManager.LoadScene("TrueEnding");
+        else // 일반엔딩
+            SceneManager.LoadScene("NormalEnding");
     }
 
     void OnTriggerEnter2D(Collider2D collision)
