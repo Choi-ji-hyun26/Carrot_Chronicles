@@ -12,7 +12,12 @@ using UnityEngine.UIElements;
 
 public class PlayerMove : MonoBehaviour
 {
-    [SerializeField] private Transform groundCheck; // 발바닥 기준 위치
+    // public : Player 관련 스크립트
+    public Rigidbody2D rigid { get; private set; } 
+    public SpriteRenderer spriteRenderer { get; private set; }
+    public BoxCollider2D boxCollider { get; private set; }
+    public Animator animator { get; private set; }
+
     [SerializeField] private float maxSpeed = 6;
 
     // jump
@@ -29,16 +34,11 @@ public class PlayerMove : MonoBehaviour
     //private float gravityStore; //상황에 따라 중력을 다르게 하고 싶다면
     [SerializeField] private bool isClimbing = false;
 
-    //지면에 있는지 체크
-    [SerializeField] private bool isGrounded = false; // 땅에 닿아있는지
-    private float groundCheckRadius = 0.2f; //for isGrouded
-    [SerializeField] private LayerMask groundLayer; //for isGrounded
-
-    // public : Player 관련 스크립트
-    public Rigidbody2D rigid { get; private set; } 
-    public SpriteRenderer spriteRenderer { get; private set; }
-    public BoxCollider2D boxCollider { get; private set; }
-    public Animator animator { get; private set; }
+    //isGronded : 사다리, 점프 // RayCast
+    [SerializeField] private bool isGrounded = false; // 땅에 닿아있는지, 현재 프레임의 접지 상태
+    [SerializeField] private ContactFilter2D groundFilter; // Layer : Platform
+    [SerializeField] private float groundCheckDistance = 0.1f;
+    private RaycastHit2D[] groundHits = new RaycastHit2D[5]; // 결과 저장용 배열
 
     private void Awake()
     {
@@ -88,6 +88,7 @@ public class PlayerMove : MonoBehaviour
             SoundManager.Instance.PlaySound("JUMP");
         }
 
+        // 사다리
         if (onLadder && Mathf.Abs(Input.GetAxisRaw("Vertical")) > 0.1f) //사다리와 겹치고 위아래 키 조작이 있어야만 
         {
             isClimbing = true;
@@ -105,8 +106,8 @@ public class PlayerMove : MonoBehaviour
 
     private void FixedUpdate() // 지속적인 key 입력
     {
-        // // 바닥 체크
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+        //Landing Platform
+        CheckGrounded();
 
         // 땅에 닿았으면 점프 카운트 초기화
         if (isGrounded)
@@ -124,19 +125,9 @@ public class PlayerMove : MonoBehaviour
         else if (rigid.velocity.x < maxSpeed * (-1)) //Left Max Speed
             rigid.velocity = new Vector2(maxSpeed * (-1), rigid.velocity.y);
 
-        //Landing Platform
-        if (rigid.velocity.y < 0)
-        { //착지할때도 ray를 그리지 않게하기 위함
-            Debug.DrawRay(groundCheck.position, Vector3.down * 0.3f, new Color(1, 0, 0));
-            RaycastHit2D rayHit = Physics2D.Raycast(groundCheck.position, Vector3.down, 0.3f, LayerMask.GetMask("Platform"));// 물리기반, 이 레이어에 해당하는 것만 스캔할 것
-            // rayHit : 빔을 쏘고 오브젝트에 대한 정보
-            if (rayHit.collider != null)
-            {// 빔을 맞았을 때
-                if (rayHit.distance < 0.2f) //잘 밀착했는지
-                    animator.SetBool("isJumping", false);
-            }
-        }
+        
 
+        //사다리
         if (isClimbing)
         {
             rigid.gravityScale = 0f;
@@ -177,6 +168,23 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
+    private void CheckGrounded()
+    {
+        isGrounded = false;
+        if (rigid.velocity.y < 0) // 낙하 중일 때만 검사
+        {
+            int hitCount = rigid.Cast(Vector2.down, groundFilter, groundHits, groundCheckDistance);
+
+            if (hitCount > 0)
+            {
+                if (groundHits[0].distance < groundCheckDistance)
+                {
+                    isGrounded = true;
+                    animator.SetBool("isJumping", false);
+                }
+            }
+        }
+    }
     public void VelocityZero() // public : GameManager 호출
     {
         rigid.velocity = Vector2.zero;
