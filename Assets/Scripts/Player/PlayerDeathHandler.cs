@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class PlayerDeathHandler : MonoBehaviour
 {
-    PlayerMove player;
+    private PlayerMove player;
 
-    void Awake()
+    private void Awake()
     {
         player = GetComponent<PlayerMove>();
     }
-    public void OnDie()
+    public void OnDie() // public : PlayerDeathHandler 호출
     {
         //Sprite Alpha
         player.spriteRenderer.color = new Color(1, 1, 1, 0.4f);

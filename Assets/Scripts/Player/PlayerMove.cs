@@ -12,35 +12,35 @@ using UnityEngine.UIElements;
 
 public class PlayerMove : MonoBehaviour
 {
-    public Transform groundCheck; // 발바닥 기준 위치
-    public float maxSpeed = 6;
+    [SerializeField] private Transform groundCheck; // 발바닥 기준 위치
+    [SerializeField] private float maxSpeed = 6;
 
     // jump
-    public float firstJumpForce = 20f;
-    public float doubleJumpForce = 16f;
-    int jumpCount = 0; // 이단점프 위한 count 변수
-    int maxJumpCount = 2;
-    public bool isJumping = false;
+    [SerializeField] private float firstJumpForce = 20f;
+    [SerializeField] private float doubleJumpForce = 16f;
+    private int jumpCount = 0; // 이단점프 위한 count 변수
+    private int maxJumpCount = 2;
+    [SerializeField] private bool isJumping = false;
 
     // ladder
-    public bool onLadder;
-    public float climbSpeed = 6;
+    public bool onLadder; // public : Ladder.cs
+    [SerializeField] private float climbSpeed = 6;
     private float climbDirection;
     //private float gravityStore; //상황에 따라 중력을 다르게 하고 싶다면
-    public bool canClimbing = false;
-    public bool isClimbing = false;
+    [SerializeField] private bool isClimbing = false;
 
     //지면에 있는지 체크
-    public bool isGrounded = false; // 땅에 닿아있는지
-    public float groundCheckRadius = 0.2f; //for isGrouded
-    public LayerMask groundLayer; //for isGrounded
+    [SerializeField] private bool isGrounded = false; // 땅에 닿아있는지
+    private float groundCheckRadius = 0.2f; //for isGrouded
+    [SerializeField] private LayerMask groundLayer; //for isGrounded
 
-    public Rigidbody2D rigid { get; private set; }
+    // public : Player 관련 스크립트
+    public Rigidbody2D rigid { get; private set; } 
     public SpriteRenderer spriteRenderer { get; private set; }
     public BoxCollider2D boxCollider { get; private set; }
     public Animator animator { get; private set; }
 
-    void Awake()
+    private void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -48,7 +48,7 @@ public class PlayerMove : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
-    void Update() // 단발적인 Key 입력
+    private void Update() // 단발적인 Key 입력
     {
         // Stop Speed
         if (Input.GetButtonUp("Horizontal"))
@@ -103,7 +103,7 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
-    void FixedUpdate() // 지속적인 key 입력
+    private void FixedUpdate() // 지속적인 key 입력
     {
         // // 바닥 체크
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
@@ -177,7 +177,7 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
-    public void VelocityZero()
+    public void VelocityZero() // public : GameManager 호출
     {
         rigid.velocity = Vector2.zero;
     }

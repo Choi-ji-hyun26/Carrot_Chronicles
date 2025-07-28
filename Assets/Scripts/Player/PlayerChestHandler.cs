@@ -5,16 +5,15 @@ using UnityEngine;
 public class PlayerChestHandler : MonoBehaviour
 {
     private SpriteRenderer spriteRenderer;
-    // 무적 타임
-    public bool isUnBeatTime = false;
-    public bool isClover = false; // ChestItem에서 이 값을 설정
+    public bool isUnBeatTime = false; // public : Player Attack/Damaged/Chest Handler 호출,무적 타임
+    public bool isClover = false; // public : ChestItem에서 이 값을 설정
 
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    public void HandleChest(GameObject chestObject)
+    public void HandleChest(GameObject chestObject) // public : PlayerTriggerHandler 호출
     {
         if (!isClover) return;
 

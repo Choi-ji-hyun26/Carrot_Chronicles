@@ -4,19 +4,13 @@ using UnityEngine;
 
 public class PlayerDamageHandler : MonoBehaviour
 {
-    PlayerMove player;
-    // Rigidbody2D rigid;
-    // SpriteRenderer spriteRenderer;
-    // Animator animator;
+    private PlayerMove player;
 
-    void Awake()
+    private void Awake()
     {
         player = GetComponent<PlayerMove>();
-        // rigid = GetComponent<Rigidbody2D>();
-        // spriteRenderer = GetComponent<SpriteRenderer>();
-        // animator = GetComponent<Animator>();
     }
-    public void OnDamaged(Vector2 targetPos)
+    public void OnDamaged(Vector2 targetPos) // public : PlayerAttackHandler 호출
     {
         // Health Down
         Stats.instance.HealthDown();
@@ -38,7 +32,7 @@ public class PlayerDamageHandler : MonoBehaviour
         Invoke("OffDamaged", 3); // 무적시간 3초
     }
 
-        void OffDamaged()
+    private void OffDamaged()
     {
         if (GetComponentInParent<PlayerChestHandler>().isUnBeatTime) // 데미지 입은 상태에 피버타임 겹치는 경우 layer 변동이 없도록
             return;

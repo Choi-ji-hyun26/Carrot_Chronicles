@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class PlayerAttackHandler : MonoBehaviour
 {
-    Rigidbody2D rigid;
-    void Awake()
+    private Rigidbody2D rigid;
+    private void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
     }
-    void OnCollisionEnter2D(Collision2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Enemy")
         {
@@ -28,7 +28,7 @@ public class PlayerAttackHandler : MonoBehaviour
         }
     }
 
-    void OnAttack(Transform enemy)
+    private void OnAttack(Transform enemy)
     {
         if (enemy == null)
             return;

@@ -6,10 +6,9 @@ using UnityEngine.UI;
 
 public class FeverUIController : MonoBehaviour
 {
-    public Text feverText;
+    [SerializeField] private Text feverText;
 
-    // 무적 타임, playermove에서 호출
-    public void ActivateFeverMode()
+    public void ActivateFeverMode() // public : playermove에서 호출, 무적 타임
     {
         StartCoroutine(FeverCoroutine());
     }

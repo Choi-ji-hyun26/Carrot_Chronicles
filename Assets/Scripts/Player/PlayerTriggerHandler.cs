@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerTriggerHandler : MonoBehaviour
 {
-    void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         // 당근, 별  아이템
         if (collision.TryGetComponent<ICollectible>(out var item))

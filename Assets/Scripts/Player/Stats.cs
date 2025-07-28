@@ -8,18 +8,18 @@ public class Stats : MonoBehaviour
 {
     public static Stats instance;
 
-    public int stagePoint;
+    public int stagePoint; // public : StarItem.cs, EndingController.cs, GameManager.cs
 
-    public int health = 3;
+    public int health = 3; // public : GameManager.cs
 
-    public UnityEngine.UI.Image UIHealth;
-    public Sprite hpSprite3;
-    public Sprite hpSprite2;
-    public Sprite hpSprite1;
-    public Sprite hpSprite0;
+    [SerializeField] private UnityEngine.UI.Image UIHealth;
+    [SerializeField] private Sprite hpSprite3;
+    [SerializeField] private Sprite hpSprite2;
+    [SerializeField] private Sprite hpSprite1;
+    [SerializeField] private Sprite hpSprite0;
 
-    public Text UIPoint;
-    void Awake()
+    [SerializeField] private Text UIPoint;
+    private void Awake()
     {
         // 싱글톤 초기화
         if (instance == null)
@@ -34,14 +34,13 @@ public class Stats : MonoBehaviour
         }
     }
 
-
-    void Update()
+    private void Update()
     {
         if (UIPoint != null) //UI Point가 사용되는 씬에서만 실행되도록
             UIPoint.text = stagePoint.ToString();
     }
 
-    public void HealthUp()
+    public void HealthUp() // public : CarrotItem.cs
     {
         if (health < 3)
             health++;
@@ -50,7 +49,7 @@ public class Stats : MonoBehaviour
         else
             UIHealth.sprite = hpSprite3;
     }
-    public void HealthDown()
+    public void HealthDown() // public : PlayerDeathHandler.cs, GameManager.cs
     {
         health--;
         if (health == 2)
