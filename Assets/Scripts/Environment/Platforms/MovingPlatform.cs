@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class MovingPlatform : MonoBehaviour
 {
-    public Transform startPos;
-    public Transform endPos;
-    public Transform desPos;
-    public float speed = 1;
-    void Start()
+    [SerializeField] private Transform startPos;
+    [SerializeField] private Transform endPos;
+    [SerializeField] private Transform desPos;
+    [SerializeField] private float speed = 3;
+    private void Start()
     {
         transform.position = startPos.position;
         desPos = endPos;
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         transform.position = Vector2.MoveTowards(transform.position, desPos.position, Time.deltaTime * speed);
 

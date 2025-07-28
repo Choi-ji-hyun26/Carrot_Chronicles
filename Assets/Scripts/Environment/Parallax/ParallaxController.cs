@@ -5,19 +5,17 @@ using UnityEngine;
 
 public class ParallaxController : MonoBehaviour
 {
-    [SerializeField]
-    Transform cameraTransform; // 카메라의 Transform 컴포넌트
+    [SerializeField] private Transform cameraTransform; // 카메라의 Transform 컴포넌트
 
-    Vector3 cameraStartPos; // 게임 시작시 카메라 시작 위치
-    float distance; // cameraStartPos부터 현재 카메라까지의 x 이동거리
+    private Vector3 cameraStartPos; // 게임 시작시 카메라 시작 위치
+    private float distance; // cameraStartPos부터 현재 카메라까지의 x 이동거리
 
-    Material[] materials; // 배경 스크롤을 위한 Material 배열 변수
-    float[] layerMoveSpeed; // z 값이 다른 배경 레이어 별 이동속도
+    private Material[] materials; // 배경 스크롤을 위한 Material 배열 변수
+    private float[] layerMoveSpeed; // z 값이 다른 배경 레이어 별 이동속도
 
-    [SerializeField][Range(0.01f, 1.0f)]
-    float ParallaxSpeed; // layerMoveSpeed에 곱해서 사용하는 배경 스크롤 이동 속도
+    [SerializeField][Range(0.01f, 1.0f)] float ParallaxSpeed = 0.018f; // layerMoveSpeed에 곱해서 사용하는 배경 스크롤 이동 속도
 
-    void Awake()
+    private void Awake()
     {
         // 게임을 시작할 때 카메라의 위치 저장(이동 거리 계산용)
         cameraStartPos = cameraTransform.position;
@@ -40,7 +38,7 @@ public class ParallaxController : MonoBehaviour
         CalculateMoveSpeedLayer(backgrounds, backgroundCount);
     }
 
-    void CalculateMoveSpeedLayer(GameObject[] backgrouds, int count)
+    private void CalculateMoveSpeedLayer(GameObject[] backgrouds, int count)
     {
         float farthestBackDistance = 0;
         for(int i = 0; i < count; ++i)
@@ -58,7 +56,7 @@ public class ParallaxController : MonoBehaviour
         }
     }
 
-    void LateUpdate() {
+    private void LateUpdate() { //각 레이어가 다른 속도로 움직이도록 만들어서 입체감을 줌
         distance = cameraTransform.position.x - cameraStartPos.x;
         transform.position = new Vector3(cameraTransform.position.x, transform.position.y, 0);
 
