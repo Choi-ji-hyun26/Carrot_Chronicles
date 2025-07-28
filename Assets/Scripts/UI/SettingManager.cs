@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class SettingManager : MonoBehaviour
 {
-    public GameObject SettingMenu;
-    public void ViewSettingMenu()
+    [SerializeField] private GameObject SettingMenu;
+    public void ViewSettingMenu() // public : 유니티 UI BUTTON 연결
     {
         SettingMenu.SetActive(true);
     }
-    public void Resume()
+    public void Resume() // public : 유니티 UI BUTTON 연결
     {
         SettingMenu.SetActive(false);
     }
 
-    public void Exit()
+    public void Exit() // public : 유니티 UI BUTTON 연결
     {
         GameManager.Instance.Exit();
     }

@@ -6,8 +6,8 @@ using UnityEngine.UI;
 
 public class SetAudio : MonoBehaviour
 {
-    public enum VolumeType { BGM, SFX }
-    public VolumeType volumeType;
+    private enum VolumeType { BGM, SFX }
+    [SerializeField] private VolumeType volumeType;
 
     private Slider slider;
 
@@ -20,7 +20,7 @@ public class SetAudio : MonoBehaviour
 
         if (volumeType == VolumeType.BGM)
             slider.value = SoundManager.Instance.bgmVolume;
-        else
+        else if(volumeType == VolumeType.SFX)
             slider.value = SoundManager.Instance.sfxVolume;
 
         slider.onValueChanged.AddListener(SetVolume);

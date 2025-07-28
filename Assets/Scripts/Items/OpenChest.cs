@@ -5,12 +5,12 @@ using UnityEngine;
 public class OpenChest : MonoBehaviour
 {
     private PlayerMove player;
-    SpriteRenderer spriteRenderer;
-    public Sprite opendChest;
-    public GameObject itemPrefab;   //담겨있는 아이템의 프리펩
-    bool isOpened = false;
+    private SpriteRenderer spriteRenderer;
+    [SerializeField] private Sprite opendChest;
+    [SerializeField] private GameObject itemPrefab;   //담겨있는 아이템의 프리펩
+    private bool isOpened = false;
 
-    void Start()
+    private void Start()
     {
         player = GameObject.Find("Player").GetComponent<PlayerMove>();
         spriteRenderer = GetComponent<SpriteRenderer>();

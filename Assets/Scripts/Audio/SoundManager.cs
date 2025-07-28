@@ -7,15 +7,15 @@ public class SoundManager : MonoBehaviour
 {
     public static SoundManager Instance;
 
-    public AudioSource bgmSource;
-    public AudioMixer bgmMixer;
+    [SerializeField] private AudioSource bgmSource;
+    [SerializeField] private AudioMixer bgmMixer;
 
-    public AudioSource sfxSource;
-    public AudioMixer sfxMixer;
-    public AudioClip[] audioClips;
+    [SerializeField] private AudioSource sfxSource;
+    [SerializeField] private AudioMixer sfxMixer;
+    [SerializeField] private AudioClip[] audioClips;
 
-    public float bgmVolume = 1f;
-    public float sfxVolume = 1f;
+    public float bgmVolume = 0.8f; // public : SetAudio 호출
+    public float sfxVolume = 0.15f; // public : SetAudio 호출
 
     private void Awake()
     {
@@ -31,19 +31,19 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    public void SetBgmVolume(float value)
+    public void SetBgmVolume(float value) // public : SetAudio 호출
     {
         bgmVolume = value;
-        bgmMixer.SetFloat("Volume", Mathf.Log10(Mathf.Clamp(value, 0.0001f, 1f)) * 20f);
+        bgmMixer.SetFloat("BGMVolume", Mathf.Log10(Mathf.Clamp(value, 0.0001f, 1f)) * 20f);
     }
 
-    public void SetSfxVolume(float value)
+    public void SetSfxVolume(float value) // public : SetAudio 호출
     {
         sfxVolume = value;
-        sfxMixer.SetFloat("Volume", Mathf.Log10(Mathf.Clamp(value, 0.0001f, 1f)) * 20f);
+        sfxMixer.SetFloat("SFXVolume", Mathf.Log10(Mathf.Clamp(value, 0.0001f, 1f)) * 20f);
     }
 
-    public void PlaySound(string type)
+    public void PlaySound(string type) // public : Player 관련 스크립트 호출
     {
         int index = type switch
         {

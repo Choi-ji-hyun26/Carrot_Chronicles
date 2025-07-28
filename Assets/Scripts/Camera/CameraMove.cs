@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class CameraMove : MonoBehaviour
 {
-    public Transform player; // 캐릭터 Transform
-    public float smooth = 5f; // 부드러운 카메라 이동 속도
-    public Vector3 offset = new Vector3(0, 1, -10); // 카메라 오프셋
+    // 외부 접근 차단 + 인스펙터 표시
+    [SerializeField] private Transform player; // 캐릭터 Transform 
+    [SerializeField] private float smooth = 5f; // 부드러운 카메라 이동 속도
+    [SerializeField] private Vector3 offset = new Vector3(0, 1, -10); // 카메라 오프셋
 
     private void LateUpdate()
     {

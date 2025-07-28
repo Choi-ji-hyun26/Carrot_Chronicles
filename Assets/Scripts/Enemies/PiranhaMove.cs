@@ -12,11 +12,11 @@ public class PiranhaMove : EnemyBase
         if (piranhaAttack == null)
             piranhaAttack = GetComponent<PiranhaAttack>(); // fallback 안전장치
     }
-    public void enbox() // 유니티 엔진 애니메이션에서 호출
+    public void Enbox() // public : 니티 엔진 애니메이션에서 호출
     {
         piranhaAttack.enboxCollider();    
     }
-    public void debox() // 유니티 엔진 애니메이션에서 호출
+    public void Debox() // public : 유니티 엔진 애니메이션에서 호출
     {
         piranhaAttack.deboxCollider();
     }

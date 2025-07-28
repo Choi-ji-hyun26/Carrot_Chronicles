@@ -8,19 +8,19 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance; // 싱글톤 인스턴스
 
-    public int stageIndex;
+    [SerializeField] private int stageIndex;
 
-    public PlayerMove player;
+    [SerializeField] private PlayerMove player;
 
-    public GameObject[] Stages;
+    [SerializeField] private GameObject[] Stages;
 
-    public Text UIStage;
+    [SerializeField] private Text UIStage;
 
-    public GameObject UIRestartBtn;
-    public GameObject miniMapCamera;
-    public GameObject SettingMenu;
+    [SerializeField] private GameObject UIRestartBtn;
+    [SerializeField] private GameObject miniMapCamera;
+    [SerializeField] private GameObject SettingMenu;
 
-    void Awake()
+    private void Awake()
     {
         // 싱글톤 초기화
         if (Instance == null)
@@ -35,10 +35,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void NextStage()
+    public void NextStage() // public : PlayerTriggerHandler에서 호출
     {
-        //if(miniMapCamera.SetActive(true))
         miniMapCamera.SetActive(false);
+
         //Change Stage
         if (stageIndex < Stages.Length - 1)
         {
@@ -61,7 +61,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void LoadScenes()
+    private void LoadScenes()
     {
         if (Stats.instance.stagePoint > 15) // 진 엔딩
             SceneManager.LoadScene("TrueEnding");
@@ -69,7 +69,7 @@ public class GameManager : MonoBehaviour
             SceneManager.LoadScene("NormalEnding");
     }
 
-    void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Player")
         {
@@ -81,19 +81,19 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void PlayerReposition()
+    private void PlayerReposition()
     {
         player.transform.position = new Vector3(-6, -1, -10);
 
         player.VelocityZero();
     }
 
-    public void ViewBtn()
+    public void ViewBtn() // public : 유니티 엔진 UI BUTTON 연결
     {
         UIRestartBtn.SetActive(true);
     }
 
-    public void Restart()
+    public void Restart() // public : EndingController에서 호출
     {
         /*
         restart 후 별 제대로 카운트 안 된 이유
@@ -106,15 +106,15 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1;
         SceneManager.LoadScene(0);
     }
-    public void ViewSettingMenu()
+    public void ViewSettingMenu() // public : 유니티 엔진 UI BUTTON 연결, 설정
     {
         SettingMenu.SetActive(true);
     }
-    public void Resume() // 설정 - 계속하기
+    public void Resume() // public : 유니티 엔진 UI BUTTON 연결, 설정 - 계속하기
     {
         SettingMenu.SetActive(false);
     }
-    public void Exit() // 설정 - 나가기
+    public void Exit() // public : 유니티 엔진 UI BUTTON 연결 ,설정 - 나가기
     {
         Application.Quit();
     }

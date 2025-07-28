@@ -5,16 +5,10 @@ using UnityEngine;
 public class PlayerDeathHandler : MonoBehaviour
 {
     PlayerMove player;
-    // Rigidbody2D rigid;
-    // SpriteRenderer spriteRenderer;
-    // BoxCollider2D boxCollider;
 
     void Awake()
     {
         player = GetComponent<PlayerMove>();
-        // rigid = GetComponent<Rigidbody2D>();
-        // spriteRenderer = GetComponent<SpriteRenderer>();
-        // boxCollider = GetComponent<BoxCollider2D>();
     }
     public void OnDie()
     {

@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class Title : MonoBehaviour
 {
-    public void LoadGame()
+    public void LoadGame() // public : 유니티 UI BUTTON 연결
     {
         SceneManager.LoadScene("Game");
     }

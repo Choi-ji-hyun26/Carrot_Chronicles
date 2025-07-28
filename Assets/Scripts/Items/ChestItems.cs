@@ -11,11 +11,11 @@ public enum ItemType
 
 public class ChestItems : MonoBehaviour
 {
-    public GameObject miniMapCamera;
+    [SerializeField] private GameObject miniMapCamera;
     public ItemType type;
-    public int arrangeId = 0;
+    //public int arrangeId = 0;
 
-    Rigidbody2D itemBody;
+    private Rigidbody2D itemBody;
 
 
     private void OnTriggerEnter2D(Collider2D collision)
