@@ -28,11 +28,9 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] private bool isJumping = false;
 
     // ladder
-    public bool onLadder; // public : Ladder.cs
     [SerializeField] private float climbSpeed = 6;
-    private float climbDirection;
-    //private float gravityStore; //상황에 따라 중력을 다르게 하고 싶다면
-    [SerializeField] private bool isClimbing = false;
+    private float verticalInput;
+    [SerializeField] private float defaultGravity = 4f;
 
     //isGronded : 사다리, 점프 // RayCast
     [SerializeField] private bool isGrounded = false; // 땅에 닿아있는지, 현재 프레임의 접지 상태
@@ -79,28 +77,41 @@ public class PlayerMove : MonoBehaviour
         // Jump
         if (Input.GetButtonDown("Jump"))
         {
+            if (IsTouchingLadder(boxCollider))
+            {
+                // 사다리 접촉 중엔 점프 안됨
+                return;
+            }
             if (jumpCount < maxJumpCount)
             {
                 isJumping = true;
                 animator.SetBool("isJumping", true);
-                animator.SetBool("isClimbing", false);
             }
             SoundManager.Instance.PlaySound("JUMP");
         }
-
-        // 사다리
-        if (onLadder && Mathf.Abs(Input.GetAxisRaw("Vertical")) > 0.1f) //사다리와 겹치고 위아래 키 조작이 있어야만 
+        //사다리 
+        if (IsTouchingLadder(boxCollider))
         {
-            isClimbing = true;
+            verticalInput = Input.GetAxisRaw("Vertical");
 
-            animator.SetBool("isClimbing", true);
-            animator.SetBool("isJumping", false); // 사다리에서 점프로 오르기 할 때 애니메이션 변경위해 
+            animator.SetBool("climbStill", true);
+            animator.SetBool("isJumping", false);
 
+            if (Mathf.Abs(verticalInput) > Mathf.Epsilon)
+            {
+                animator.SetBool("isClimbing", true);
+
+            }
+            else
+            {
+                animator.SetBool("isClimbing", false);
+                animator.SetBool("climbStill", true);
+            }
         }
-        else if (!onLadder)
+        else
         {
-            isClimbing = false;
             animator.SetBool("isClimbing", false);
+            animator.SetBool("climbStill", false);
         }
     }
 
@@ -126,28 +137,17 @@ public class PlayerMove : MonoBehaviour
             rigid.velocity = new Vector2(maxSpeed * (-1), rigid.velocity.y);
 
         
-
-        //사다리
-        if (isClimbing)
+        if (IsTouchingLadder(boxCollider))
         {
+            // 중력 제거 & 위/아래 이동
             rigid.gravityScale = 0f;
-
-            if (Mathf.Abs(Input.GetAxisRaw("Vertical")) > 0.1f)
-            {
-                climbDirection = climbSpeed * Input.GetAxisRaw("Vertical");
-                rigid.velocity = new Vector2(rigid.velocity.x, climbDirection);
-            }
-            else
-            {
-                rigid.velocity = new Vector2(rigid.velocity.x, 0); // 움직임 없음
-            }
-
-            Debug.Log("Gravity : " + rigid.gravityScale);
+            Vector2 playerClimbVelocity = new Vector2(rigid.velocity.x, verticalInput * climbSpeed);
+            rigid.velocity = playerClimbVelocity;
         }
         else
         {
-            rigid.gravityScale = 4f;
-            Debug.Log("Gravity : " + rigid.gravityScale);
+            // 사다리에서 벗어났으면 중력 복원
+            rigid.gravityScale = defaultGravity; // 예: 4f 또는 선언한 값
         }
 
         //JUMP
@@ -168,6 +168,14 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
+    //Check to see if player is touching ladder
+    private bool IsTouchingLadder(BoxCollider2D player)
+    {
+        int ladder = LayerMask.GetMask("Ladders");
+
+        return player.IsTouchingLayers(ladder);
+    }
+    
     private void CheckGrounded()
     {
         isGrounded = false;
