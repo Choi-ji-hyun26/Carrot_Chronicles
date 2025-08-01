@@ -69,10 +69,10 @@ public class PlayerMove : MonoBehaviour
         else // 방향키 누를 때
             rigid.constraints = RigidbodyConstraints2D.FreezeRotation;
 
-        if (isGrounded) //5.23 사다리 다 내려갔음에도 오르는 애니메이션 유지되길래 추가함 -> 해결됨
-        {
-            animator.SetBool("isClimbing", false);
-        }
+        // if (isGrounded) //5.23 사다리 다 내려갔음에도 오르는 애니메이션 유지되길래 추가함 -> 해결됨
+        // {
+        //     animator.SetBool("isClimbing", false);
+        // }
 
         // Jump
         if (Input.GetButtonDown("Jump"))

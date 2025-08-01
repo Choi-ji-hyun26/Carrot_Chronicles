@@ -20,17 +20,12 @@ public class EnemyBase : MonoBehaviour
 
     public virtual void OnDamaged()  //PlayerAttackHandler 에서 호출
     {
-        //Sprite Alpha
-        spriteRenderer.color = new Color(1,1,1,0.4f);
-        //Sprite Flip Y
-        spriteRenderer.flipY = true;
-        //Collider Disable
         boxCollider.enabled = false;
-        //Die Effect Jump
-        rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
-        rigid.gravityScale = 4f;
+        rigid.simulated = false;
+
+        animator.Play("Enemy_Death");
         //Destroy
-        Invoke("DeActive",5);
+        Invoke("DeActive",0.4f);
     }
 
     private void DeActive()
