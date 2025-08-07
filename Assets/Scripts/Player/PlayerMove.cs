@@ -69,23 +69,18 @@ public class PlayerMove : MonoBehaviour
         else // 방향키 누를 때
             rigid.constraints = RigidbodyConstraints2D.FreezeRotation;
 
-        // if (isGrounded) //5.23 사다리 다 내려갔음에도 오르는 애니메이션 유지되길래 추가함 -> 해결됨
-        // {
-        //     animator.SetBool("isClimbing", false);
-        // }
-
         // Jump
         if (Input.GetButtonDown("Jump"))
         {
             if (IsTouchingLadder(boxCollider))
             {
-                // 사다리 접촉 중엔 점프 안됨
-                return;
+                return; // 사다리 접촉 중엔 점프 안됨
             }
             if (jumpCount < maxJumpCount)
             {
                 isJumping = true;
                 animator.SetBool("isJumping", true);
+                animator.SetBool("isWalking", false);
             }
             SoundManager.Instance.PlaySound("JUMP");
         }
@@ -100,12 +95,10 @@ public class PlayerMove : MonoBehaviour
             if (Mathf.Abs(verticalInput) > Mathf.Epsilon)
             {
                 animator.SetBool("isClimbing", true);
-
             }
             else
             {
                 animator.SetBool("isClimbing", false);
-                animator.SetBool("climbStill", true);
             }
         }
         else
