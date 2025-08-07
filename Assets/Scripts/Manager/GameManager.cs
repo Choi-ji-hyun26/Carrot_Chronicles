@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private Text UIStage;
 
+    [SerializeField] private GameObject darkOverlay;
     [SerializeField] private GameObject UIRestartBtn;
     [SerializeField] private GameObject miniMapCamera;
     [SerializeField] private GameObject SettingMenu;
@@ -88,8 +89,10 @@ public class GameManager : MonoBehaviour
         player.VelocityZero();
     }
 
+    // 플레이어 상태 Die 인 경우
     public void ViewBtn() // public : 유니티 엔진 UI BUTTON 연결
     {
+        darkOverlay.SetActive(true);
         UIRestartBtn.SetActive(true);
     }
 
