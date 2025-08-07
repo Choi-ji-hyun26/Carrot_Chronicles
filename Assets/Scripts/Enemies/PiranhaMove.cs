@@ -4,20 +4,32 @@ using UnityEngine;
 
 public class PiranhaMove : EnemyBase
 {
-    [SerializeField] private PiranhaAttack piranhaAttack; // 인스펙터 드래그 허용 -> SerializeField , 외부접근 막기 -> private
+    protected CircleCollider2D attackCollider;
+    protected float defaultColliderX; // attack collider 초기 x 위치 저장
 
     protected override void Awake()
     {
         base.Awake();
-        if (piranhaAttack == null)
-            piranhaAttack = GetComponent<PiranhaAttack>(); // fallback 안전장치
+        attackCollider = GetComponent<CircleCollider2D>();
+        defaultColliderX = Mathf.Abs(attackCollider.offset.x);
+        UpdateColliderPositionX();
     }
-    public void Enbox() // public : 니티 엔진 애니메이션에서 호출
+
+    private void UpdateColliderPositionX() // attack collider x 포지션 변경
     {
-        piranhaAttack.enboxCollider();    
+        Vector2 offset = attackCollider.offset;
+
+        // flipX 여부에 따라 부호 반전
+        offset.x = defaultColliderX * (spriteRenderer.flipX ? 1f : -1f); // flipX true(왼쪽방향) 1, false -1
+
+        attackCollider.offset = offset;
+    }
+    public void Enbox() // public : 유니티 엔진 애니메이션에서 호출
+    {
+        attackCollider.enabled = true;
     }
     public void Debox() // public : 유니티 엔진 애니메이션에서 호출
     {
-        piranhaAttack.deboxCollider();
+        attackCollider.enabled = false;
     }
 }
