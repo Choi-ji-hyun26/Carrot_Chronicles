@@ -19,7 +19,7 @@ public class PlayerTriggerHandler : MonoBehaviour
         else if (collision.CompareTag("Finish"))
         {
             //Next Stage
-            GameManager.Instance.NextStage();
+            StartCoroutine(GameManager.Instance.NextStage());
 
             //Sound
             SoundManager.Instance.PlaySound("FINISH");

@@ -22,7 +22,7 @@ public class PlayerDeathHandler : MonoBehaviour
         player.rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
 
         // 카메라 따라가기 멈추기
-        FindObjectOfType<CameraMove>().StopFollowing();
+        FindObjectOfType<CameraController>().StopFollowing();
         //Sound
         SoundManager.Instance.PlaySound("DIE");
     }

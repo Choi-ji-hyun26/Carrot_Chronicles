@@ -36,9 +36,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void NextStage() // public : PlayerTriggerHandler에서 호출
+    public IEnumerator NextStage() // public : PlayerTriggerHandler에서 호출
     {
         miniMapCamera.SetActive(false);
+        player.canMove = false; // 플레이어 이동 장금
+
+        yield return StartCoroutine(FadeController.Instance.FadeOut()); // 이미지 점점 보임
 
         //Change Stage
         if (stageIndex < Stages.Length - 1)
@@ -46,9 +49,12 @@ public class GameManager : MonoBehaviour
             Stages[stageIndex].SetActive(false);
             stageIndex++;
             Stages[stageIndex].SetActive(true);
+
             PlayerReposition();
+            Camera.main.GetComponent<CameraController>()?.EnableInstantMoveNextFrame();
 
             UIStage.text = "STAGE " + (stageIndex + 1); //stageIndex는 0부터 시작해서 +1
+
         }
         else // Game Clear
         {
@@ -59,7 +65,12 @@ public class GameManager : MonoBehaviour
 
             //Ending Scene 로드
             LoadScenes();
+            yield break;
         }
+
+        yield return new WaitForSeconds(0.15f);
+        yield return StartCoroutine(FadeController.Instance.FadeIn()); // 이미지 점점 사라짐
+        player.canMove = true; // 플레이어 이동 복구
     }
 
     private void LoadScenes()

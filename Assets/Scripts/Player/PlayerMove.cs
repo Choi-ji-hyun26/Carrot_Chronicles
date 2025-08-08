@@ -18,6 +18,7 @@ public class PlayerMove : MonoBehaviour
     public BoxCollider2D boxCollider { get; private set; }
     public Animator animator { get; private set; }
 
+    public bool canMove = true; // public : GameManager.cs
     [SerializeField] private float maxSpeed = 6;
 
     // jump
@@ -110,6 +111,7 @@ public class PlayerMove : MonoBehaviour
 
     private void FixedUpdate() // 지속적인 key 입력
     {
+        if (!canMove) return; // Fade in out 사이에 움직일 수 없게
         //Landing Platform
         CheckGrounded();
 
