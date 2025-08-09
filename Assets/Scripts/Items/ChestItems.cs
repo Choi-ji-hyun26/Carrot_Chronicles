@@ -13,7 +13,6 @@ public class ChestItems : MonoBehaviour
 {
     [SerializeField] private GameObject miniMapCamera;
     public ItemType type;
-    //public int arrangeId = 0;
 
     private Rigidbody2D itemBody;
 
@@ -27,7 +26,7 @@ public class ChestItems : MonoBehaviour
 
             if (type == ItemType.clover)
             {
-                chestHandler.isClover = true;
+                chestHandler.HandleChest();
                 //Debug.Log("Clover");
             }
             else if (type == ItemType.scroll)

@@ -68,9 +68,6 @@ public class GameManager : MonoBehaviour
         {
             //Player Control Lock
             Time.timeScale = 0;
-
-            ViewBtn();
-
             //Ending Scene 로드
             LoadScenes();
         }
@@ -78,7 +75,7 @@ public class GameManager : MonoBehaviour
 
     private void LoadScenes()
     {
-        if (Stats.instance.stagePoint > 15) // 진 엔딩
+        if (Stats.instance.stagePoint > 40) // 진 엔딩
             SceneManager.LoadScene("TrueEnding");
         else // 일반엔딩
             SceneManager.LoadScene("NormalEnding");

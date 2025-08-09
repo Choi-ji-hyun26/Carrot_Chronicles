@@ -12,10 +12,6 @@ public class PlayerTriggerHandler : MonoBehaviour
             item.OnCollected(gameObject);
             return;
         }
-        else if (collision.CompareTag("Chest"))
-        {
-            GetComponentInParent<PlayerChestHandler>().HandleChest(collision.gameObject);
-        }
         else if (collision.CompareTag("Finish"))
         {
             //Next Stage
@@ -24,5 +20,6 @@ public class PlayerTriggerHandler : MonoBehaviour
             //Sound
             SoundManager.Instance.PlaySound("FINISH");
         }
+        //Chest는 Items - ChestItems.cs 에서 처리
     }
 }
