@@ -33,7 +33,7 @@ public class EnemyAutoSpawnerEditor : EditorWindow
     }
 
     // 에디터 창에 표시될 UI 구성
-    void OnGUI()
+    private void OnGUI()
     {
         GUILayout.Label("Enemy Auto Spawner", EditorStyles.boldLabel);
 
@@ -56,7 +56,7 @@ public class EnemyAutoSpawnerEditor : EditorWindow
         }
     }
     // 메인 함수
-    void SpawnEnemies()
+    private void SpawnEnemies()
     {
         if (stageObject == null || groundTilemap == null)
         {
@@ -116,7 +116,7 @@ public class EnemyAutoSpawnerEditor : EditorWindow
     }
 
     // 타일 맵에서 적이 배치 가능한 위치를 찾는 함수
-    List<Vector3> GetValidGroundPositions()
+    private List<Vector3> GetValidGroundPositions()
     {
         List<Vector3> positions = new List<Vector3>();
         BoundsInt bounds = groundTilemap.cellBounds;
@@ -141,7 +141,7 @@ public class EnemyAutoSpawnerEditor : EditorWindow
     }
 
     // 리스트를 랜덤으로 섞는 함수
-    void Shuffle<T>(List<T> list)
+    private void Shuffle<T>(List<T> list)
     {
         for (int i = list.Count - 1; i > 0; i--)
         {
@@ -152,7 +152,7 @@ public class EnemyAutoSpawnerEditor : EditorWindow
         }
     }
     // 0~1 사이의 값 t를 기반으로 커브에서 난이도 값을 뽑고 그에 따라 적 종류를 선택
-    GameObject PickEnemyByDifficulty(float t)
+    private GameObject PickEnemyByDifficulty(float t)
     {
         float curveValue = difficultyCurve.Evaluate(t);
 
