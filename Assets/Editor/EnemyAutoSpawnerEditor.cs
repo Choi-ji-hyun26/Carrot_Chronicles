@@ -87,9 +87,9 @@ public class EnemyAutoSpawnerEditor : EditorWindow
             Debug.LogWarning("적을 배치할 수 있는 바닥 타일이 없습니다.");
             return;
         }
-
+        // 위치 랜덤
         Shuffle(groundPositions);
-
+        // 적 배치 루프 
         for (int i = 0; i < Mathf.Min(enemyTotalCount, groundPositions.Count); i++)
         {
             float t = i / (float)(enemyTotalCount - 1);
@@ -104,18 +104,19 @@ public class EnemyAutoSpawnerEditor : EditorWindow
                 {
                     spawnPos.y += Random.Range(1f, 3f); // 공중 배치
                 }
-
-                GameObject enemy = (GameObject)PrefabUtility.InstantiatePrefab(prefabToSpawn); // PrefabUtility.InstantiatePrefab : 에디터 상에서 prefab 인스턴스 생성
+                // 에디터 상에서 prefab 인스턴스 생성
+                GameObject enemy = (GameObject)PrefabUtility.InstantiatePrefab(prefabToSpawn);
                 enemy.transform.position = spawnPos;
                 enemy.transform.SetParent(enemyParent);
-                Undo.RegisterCreatedObjectUndo(enemy, "Spawn Enemy"); // Crtl + X 로 Undo
+                // Undo : Crtl + Z, 배치 취소 
+                Undo.RegisterCreatedObjectUndo(enemy, "Spawn Enemy"); 
             }
         }
 
         Undo.CollapseUndoOperations(group);
     }
 
-    // 타일 맵에서 적이 배치 가능한 위치를 찾는 함수
+    // 타일 맵에서 배치 가능한 위치 수집
     private List<Vector3> GetValidGroundPositions()
     {
         List<Vector3> positions = new List<Vector3>();
@@ -131,7 +132,8 @@ public class EnemyAutoSpawnerEditor : EditorWindow
                 // 바닥 타일이 있고 그 위가 비어 있으면 적이 설 수 있는 자리로 판단
                 if (groundTilemap.HasTile(current) && !groundTilemap.HasTile(above))
                 {
-                    Vector3 worldPos = groundTilemap.CellToWorld(above); // CellToWorld(above) : 실제 월드 좌표로 변환해서 저장
+                    // Cell 좌표를 실제 월드 좌표로 변환해서 저장
+                    Vector3 worldPos = groundTilemap.CellToWorld(above); 
                     positions.Add(worldPos);
                 }
             }
@@ -151,7 +153,7 @@ public class EnemyAutoSpawnerEditor : EditorWindow
             list[j] = temp;
         }
     }
-    // 0~1 사이의 값 t를 기반으로 커브에서 난이도 값을 뽑고 그에 따라 적 종류를 선택
+    // 난이도 커브(t:0~1)에 따라 적 종류 선택
     private GameObject PickEnemyByDifficulty(float t)
     {
         float curveValue = difficultyCurve.Evaluate(t);

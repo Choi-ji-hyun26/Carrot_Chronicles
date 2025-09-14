@@ -35,17 +35,19 @@ public class SlugMove : EnemyBase
 
     private IEnumerator ThinkRoutine(float initialDelay = 0f)
     {
-        // 초기 딜레이
+        // 초기 딜레이 : 스폰 직후 바로 이동하지 않고 잠시 대기
         if (initialDelay > 0f)
             yield return new WaitForSeconds(initialDelay);
 
         while (true)
         {
-            nextMove = Random.Range(MOVE_LEFT, MOVE_RIGHT+1); // -1, 0, 1 중 선택
+            // 랜덤 이동 결정, -1(왼), 0(idle), 1(오) 중 선택
+            nextMove = Random.Range(MOVE_LEFT, MOVE_RIGHT+1); 
 
             // Sprite 방향 전환
             if (nextMove != MOVE_IDLE)
                 spriteRenderer.flipX = nextMove == 1;
+                
             // 다음 Think까지 딜레이
             float nextThinkTime = Random.Range(2f, 4f);
             yield return new WaitForSeconds(nextThinkTime);
@@ -55,7 +57,8 @@ public class SlugMove : EnemyBase
     {
         nextMove *= -1;
         spriteRenderer.flipX = nextMove == 1;
-        // Coroutine 재시작 : 기존 코루틴 정지 후 5초 뒤 재시작
+        // Coroutine 재시작
+        // 플랫폼 끝 감지 -> 기존 ThinkRoutine 중지 -> 일정 딜레이 후 새로 시작
         if (thinkCoroutine != null)
             StopCoroutine(thinkCoroutine);
 

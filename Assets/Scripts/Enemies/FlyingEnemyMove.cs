@@ -19,8 +19,9 @@ public class FlyingEnemyMove : EnemyBase
 
     private void FixedUpdate()
     {
-        if (isDead) return; // 죽었을 때 fixedupdate() 계속 실행되지 않도록
-
+        // 죽었을 때 fixedupdate() 계속 실행되지 않도록
+        if (isDead) return;
+        
         float offset = Mathf.Sin(Time.time * speed) * moveDistance;
         Vector2 newPos = new Vector2(transform.position.x, startPos.y + offset);
         rigid.MovePosition(newPos);
