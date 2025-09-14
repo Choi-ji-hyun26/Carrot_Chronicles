@@ -1,15 +1,21 @@
 //using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SlugMove : EnemyBase
 {
+    // 상수화
+    private const int MOVE_LEFT = -1;
+    private const int MOVE_IDLE = 0;
+    private const int MOVE_RIGHT = 1;
+
     private int nextMove;
+    private Coroutine thinkCoroutine;
+
     protected override void Awake()
     {
         base.Awake();
-        Invoke("Think", 3); // 5초뒤에 함수 호출
+        thinkCoroutine = StartCoroutine(ThinkRoutine(2f)); // 초기 딜레이 2초
     }
 
     private void FixedUpdate()
@@ -27,29 +33,32 @@ public class SlugMove : EnemyBase
         }
     }
 
-    protected virtual void Think()
+    private IEnumerator ThinkRoutine(float initialDelay = 0f)
     {
-        //Set Next Active
-        nextMove = Random.Range(-1,2); //최소값(포함), 최대값(미포함) -1: 왼쪽 0: idle, 1: 오른쪽
+        // 초기 딜레이
+        if (initialDelay > 0f)
+            yield return new WaitForSeconds(initialDelay);
 
-        // Sprite Animation
-        animator.SetInteger("WalkSpeed", nextMove);
+        while (true)
+        {
+            nextMove = Random.Range(MOVE_LEFT, MOVE_RIGHT+1); // -1, 0, 1 중 선택
 
-        //Flip Sprite
-        if(nextMove != 0) //idle 상태에서는 방향전환이 필요 없으므로
-            spriteRenderer.flipX = nextMove == 1; //true : 1 -> 체크된 거 오른쪽 방향
-
-        //Recursive, 재귀 함수는 보통 함수 마지막에 위치!
-        float nextThinkTime = Random.Range(2f,5f);
-        Invoke("Think", nextThinkTime); //재귀 + 딜레이 
+            // Sprite 방향 전환
+            if (nextMove != MOVE_IDLE)
+                spriteRenderer.flipX = nextMove == 1;
+            // 다음 Think까지 딜레이
+            float nextThinkTime = Random.Range(2f, 4f);
+            yield return new WaitForSeconds(nextThinkTime);
+        }
     }
-
     private void Turn()
     {
         nextMove *= -1;
         spriteRenderer.flipX = nextMove == 1;
+        // Coroutine 재시작 : 기존 코루틴 정지 후 5초 뒤 재시작
+        if (thinkCoroutine != null)
+            StopCoroutine(thinkCoroutine);
 
-        CancelInvoke("Think");
-        Invoke("Think",5);
+        thinkCoroutine = StartCoroutine(ThinkRoutine(4f));
     }
 }
